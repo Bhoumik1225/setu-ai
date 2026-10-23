@@ -19,30 +19,41 @@ export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({ pageVari
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 bg-[#030712]">
-      {/* 1. Base Layer: Deep space navy and midnight linear base */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030712] via-[#071A38]/70 to-[#030712]" />
+      {/* 1. Base Layer: Dual-Color Moving Liquid Gradient Mesh (Electric Cyan & Royal Violet) */}
+      <div className={`absolute inset-0 ${ambientMotion ? 'animate-two-color-flow opacity-70' : 'bg-gradient-to-br from-[#071A38] via-[#1E1B4B] to-[#030712] opacity-60'}`} />
 
-      {/* 2. Slow-Moving Soft Multi-Color Light Glows */}
-      {/* Upper-Left: Royal Indigo & Soft Violet (#312E81 & #A78BFA) */}
-      <div className="absolute top-[-18%] left-[-8%] w-[720px] h-[720px] rounded-full bg-[#312E81]/30 blur-[180px] animate-glow-1" />
-      <div className="absolute top-[5%] left-[8%] w-[480px] h-[480px] rounded-full bg-[#A78BFA]/18 blur-[160px] animate-glow-2" />
+      {/* 2. Primary Flowing Color 1: Electric Teal Cyan (#06B6D4) Liquid Orb */}
+      <div
+        className={`absolute top-[-10%] left-[-5%] w-[850px] h-[850px] rounded-full bg-gradient-to-br from-[#06B6D4]/50 via-[#0EA5E9]/35 to-transparent blur-[140px] ${
+          ambientMotion ? 'animate-liquid-cyan' : ''
+        }`}
+        style={{ mixBlendMode: 'screen' }}
+      />
 
-      {/* Upper-Right: Electric Blue (#2563EB) */}
-      <div className="absolute top-[-12%] right-[-6%] w-[750px] h-[750px] rounded-full bg-[#2563EB]/25 blur-[190px] animate-glow-2" />
+      {/* 3. Primary Flowing Color 2: Royal Electric Violet (#8B5CF6 / #A78BFA) Liquid Orb */}
+      <div
+        className={`absolute bottom-[-15%] right-[-5%] w-[900px] h-[900px] rounded-full bg-gradient-to-tl from-[#8B5CF6]/55 via-[#6D28D9]/40 to-transparent blur-[150px] ${
+          ambientMotion ? 'animate-liquid-violet' : ''
+        }`}
+        style={{ mixBlendMode: 'screen' }}
+      />
 
-      {/* Lower-Right: Teal Cyan (#06B6D4) */}
-      <div className="absolute bottom-[-15%] right-[8%] w-[680px] h-[680px] rounded-full bg-[#06B6D4]/22 blur-[170px] animate-glow-3" />
+      {/* 4. Secondary Counter-Drifting Light Waves */}
+      <div
+        className={`absolute top-[25%] right-[15%] w-[600px] h-[600px] rounded-full bg-[#06B6D4]/30 blur-[160px] ${
+          ambientMotion ? 'animate-glow-2' : ''
+        }`}
+      />
+      <div
+        className={`absolute bottom-[20%] left-[10%] w-[650px] h-[650px] rounded-full bg-[#A78BFA]/30 blur-[160px] ${
+          ambientMotion ? 'animate-glow-1' : ''
+        }`}
+      />
 
-      {/* Lower-Left: Subtle Violet Glow (#A78BFA) */}
-      <div className="absolute bottom-[-10%] left-[10%] w-[520px] h-[520px] rounded-full bg-[#A78BFA]/14 blur-[160px] animate-glow-1" />
+      {/* 5. Fine Low-Opacity Cyber Grid Texture */}
+      <div className="absolute inset-0 setu-grid-overlay opacity-50" />
 
-      {/* Subtle Coral Pink Ambient Glow for alerts (#FB7185) */}
-      <div className="absolute top-[45%] left-[30%] w-[420px] h-[420px] rounded-full bg-[#FB7185]/8 blur-[170px]" />
-
-      {/* 3. Fine Low-Opacity Cyber Grid Texture */}
-      <div className="absolute inset-0 setu-grid-overlay opacity-60" />
-
-      {/* 4. 3D Neural Safety Network Canvas */}
+      {/* 6. 3D Neural Safety Network Canvas */}
       {!highContrast && (
         <NeuralNetworkScene
           pageVariant={pageVariant}
@@ -51,8 +62,8 @@ export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({ pageVari
         />
       )}
 
-      {/* 5. Soft Dark Readability Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/90 via-transparent to-[#030712]/50" />
+      {/* 7. Soft Vignette Overlay for Crisp Readability */}
+      <div className="absolute inset-0 bg-radial from-transparent via-[#030712]/40 to-[#030712]/85" />
     </div>
   );
 };
