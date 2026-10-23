@@ -37,15 +37,27 @@ export default function LogsPage() {
   const [expandedLogId, setExpandedLogId] = useState<string | null>(logs[0]?.id || null);
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Just now');
 
+  const query = searchQuery.trim().toLowerCase();
   const filteredLogs = logs.filter((log) => {
+    if (!log) return false;
     const matchesCat = filterCategory === 'ALL' || log.category === filterCategory;
     const matchesUrg = filterUrgency === 'ALL' || log.urgencyLevel === filterUrgency;
     const matchesVer = filterVerified === 'ALL' || log.verifiedStatus === filterVerified;
+    if (!query) return matchesCat && matchesUrg && matchesVer;
+
+    const targetSys = (log.targetSystem || '').toLowerCase();
+    const protoCode = (log.protocolCode || '').toLowerCase();
+    const loc = (log.location || '').toLowerCase();
+    const payload = (log.payloadSummary || '').toLowerCase();
+    const eventId = (log.id || '').toLowerCase();
+
     const matchesSearch =
-      log.targetSystem.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.protocolCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.payloadSummary.toLowerCase().includes(searchQuery.toLowerCase());
+      targetSys.includes(query) ||
+      protoCode.includes(query) ||
+      loc.includes(query) ||
+      payload.includes(query) ||
+      eventId.includes(query);
+
     return matchesCat && matchesUrg && matchesVer && matchesSearch;
   });
 

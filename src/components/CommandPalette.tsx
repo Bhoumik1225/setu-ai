@@ -192,13 +192,20 @@ export const CommandPalette: React.FC = () => {
   ];
 
   // Dynamic Case & Log Results based on query
+  const trimmedQuery = query.trim().toLowerCase();
   const dynamicCaseItems: PaletteItem[] = cases
-    .filter((c) => c.title.toLowerCase().includes(query.toLowerCase()) || c.id.toLowerCase().includes(query.toLowerCase()))
+    .filter((c) => {
+      if (!c) return false;
+      const title = (c.title || '').toLowerCase();
+      const id = (c.id || '').toLowerCase();
+      const summary = (c.summary || '').toLowerCase();
+      return title.includes(trimmedQuery) || id.includes(trimmedQuery) || summary.includes(trimmedQuery);
+    })
     .map((c) => ({
       id: c.id,
       category: 'Cases & Logs',
-      title: `${c.id} — ${c.title}`,
-      subtitle: `${c.status} • ${c.timestamp} • ${c.location || 'Unknown'}`,
+      title: `${c.id} — ${c.title || 'Untitled Case'}`,
+      subtitle: `${c.status || 'Active'} • ${c.timestamp || 'Recent'} • ${c.location || 'Unknown'}`,
       icon: History,
       badge: c.urgency,
       action: () => {
