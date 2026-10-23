@@ -124,7 +124,7 @@ const setuBridgeSchema: Schema = {
   ],
 };
 
-function generateEmpatheticFallback(prompt: string = '', filesCount: number = 0, sourceLink?: string): BridgeOutput {
+export function generateEmpatheticFallback(prompt: string = '', filesCount: number = 0, sourceLink?: string): BridgeOutput {
   const pLower = prompt.toLowerCase();
   const isMed = pLower.includes('dizzy') || pLower.includes('prescription') || pLower.includes('patient') || pLower.includes('father') || pLower.includes('bleed') || pLower.includes('chest') || pLower.includes('heart') || pLower.includes('doctor') || pLower.includes('collapse') || pLower.includes('faint');
   const isFlood = pLower.includes('flood') || pLower.includes('water') || pLower.includes('rain') || pLower.includes('storm') || pLower.includes('river');
