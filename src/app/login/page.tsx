@@ -54,9 +54,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 text-[#F8FAFC] font-sans overflow-hidden">
-      {/* 3D Neural Safety Network Background for Login */}
-      <AnimatedBackground pageVariant="login" />
-
       {/* Main Glassmorphism Card */}
       <div className="relative z-10 w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-3xl overflow-hidden border border-white/10 bg-[#08142A]/65 backdrop-blur-2xl shadow-2xl shadow-[#030712] transition-all duration-300 hover:border-white/20 hover:shadow-cyan-500/10">
         {/* Left Side: Brand Story, Workflow Diagram & Trust Badges */}

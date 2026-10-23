@@ -100,10 +100,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-[#F8FAFC] flex flex-col font-sans selection:bg-[#06B6D4] selection:text-[#030712] relative">
-      {/* 3D Neural Safety Network & Layered Gradient Background */}
-      <AnimatedBackground pageVariant="dashboard" />
-
+    <div className="min-h-screen text-[#F8FAFC] flex flex-col font-sans selection:bg-[#06B6D4] selection:text-[#030712] relative">
       <Navbar
         onOpenKeyModal={() => setIsKeyModalOpen(true)}
         onOpenTour={() => setIsTourOpen(true)}

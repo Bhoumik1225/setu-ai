@@ -83,9 +83,6 @@ export default function LogsPage() {
 
   return (
     <div className="min-h-screen relative text-[#F8FAFC] flex flex-col font-sans selection:bg-[#06B6D4] selection:text-[#061826]">
-      {/* 3D Neural Safety Network Background */}
-      <AnimatedBackground pageVariant="logs" />
-
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
