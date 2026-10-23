@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenKeyModal, onOpenTour }) =>
     router.push('/login');
   };
 
-  const labels = {
+  const allLabels: Record<string, { dashboard: string; logs: string; tagline: string; engine: string; demoAccess: string }> = {
     en: {
       dashboard: 'Command Center',
       logs: 'System Pulse',
@@ -77,7 +77,51 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenKeyModal, onOpenTour }) =>
       engine: 'SETU Neural Core: ONLINE',
       demoAccess: 'Judge Access',
     },
-  }[language];
+    es: {
+      dashboard: 'Centro de Mando',
+      logs: 'Pulso del Sistema',
+      tagline: 'Del caos a la acción segura',
+      engine: 'Núcleo Neural SETU: EN LÍNEA',
+      demoAccess: 'Acceso Juez',
+    },
+    fr: {
+      dashboard: 'Centre de Commande',
+      logs: 'Pouls Système',
+      tagline: 'De la détresse à une action sécurisée',
+      engine: 'Cœur Neural SETU: EN LIGNE',
+      demoAccess: 'Accès Juge',
+    },
+    de: {
+      dashboard: 'Kommandozentrale',
+      logs: 'Systempuls',
+      tagline: 'Von der Krise zur sicheren Aktion',
+      engine: 'SETU Neuronalkern: ONLINE',
+      demoAccess: 'Richterzugang',
+    },
+    ar: {
+      dashboard: 'مركز القيادة',
+      logs: 'نبض النظام',
+      tagline: 'من إشارات الاستغاثة إلى التدخل الآمن',
+      engine: 'نواة سيتو العصبية: نشط',
+      demoAccess: 'بوابة التحكيم',
+    },
+    bn: {
+      dashboard: 'কমান্ড সেন্টার',
+      logs: 'সিস্টেম পালস',
+      tagline: 'বিপদ সংকেত থেকে নিরাপদ পদক্ষেপ',
+      engine: 'সেতু নিউরাল কোর: সক্রিয়',
+      demoAccess: 'বিচারক প্রবেশাধিকার',
+    },
+    ja: {
+      dashboard: '指令センター',
+      logs: 'システム状況',
+      tagline: '現場のシグナルを安全な行動へ',
+      engine: 'SETU ニューラルコア: オンライン',
+      demoAccess: '評価アクセス',
+    },
+  };
+
+  const labels = allLabels[language] || allLabels.en;
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-2xl bg-[#030712]/75 border-b border-white/10 shadow-2xl transition-all">

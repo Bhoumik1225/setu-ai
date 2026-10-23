@@ -8,6 +8,7 @@ import { RaycastQuickActionsGrid } from '@/components/RaycastQuickActionsGrid';
 import { RaycastResultWorkspace } from '@/components/RaycastResultWorkspace';
 import { CaseTimelineSection } from '@/components/CaseTimelineSection';
 import { RaycastCommunitySignals } from '@/components/RaycastCommunitySignals';
+import { LiveSafetyMap } from '@/components/LiveSafetyMap';
 import { ApiKeyModal } from '@/components/ApiKeyModal';
 import { BridgeOutput, MultimodalPayloadItem } from '@/types/bridge';
 
@@ -51,36 +52,37 @@ export default function DashboardPage() {
         }),
       });
 
-      const data = await response.json();
+      const resJson = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to process signal');
+        throw new Error(resJson.error || 'Failed to process signal');
       }
 
-      setOutput(data);
+      const resultPayload = resJson.data || resJson;
+      setOutput(resultPayload);
 
       // Register new case in Timeline
       addCase({
-        title: data.situationTitle || (textPrompt ? textPrompt.slice(0, 48) + '...' : 'Multimodal Signal Triage'),
-        category: data.category,
-        urgency: data.urgencyLevel,
+        title: resultPayload.situationTitle || (textPrompt ? textPrompt.slice(0, 48) + '...' : 'Multimodal Signal Triage'),
+        category: resultPayload.category,
+        urgency: resultPayload.urgencyLevel,
         status: 'Action Ready',
-        location: data.extractedEntities?.location || detectedLocation || 'Sector 4 Metro',
-        summary: data.summary,
-        actionSummary: data.extractedEntities?.recommendedAction || 'Action plan verified via Gemini reasoning.',
+        location: resultPayload.extractedEntities?.location || detectedLocation || 'Sector 4 Metro',
+        summary: resultPayload.summary,
+        actionSummary: resultPayload.extractedEntities?.recommendedAction || 'Action plan verified via Gemini reasoning.',
       });
 
       // Record in Telemetry Logs
       const latency = Date.now() - startTime;
       addLog({
-        targetSystem: data.category === 'MEDICAL' ? 'CAD-911 Medical Dispatch' : data.category === 'WEATHER' ? 'FEMA Civic Incident Network' : 'DOT Transit System',
+        targetSystem: resultPayload.category === 'MEDICAL' ? 'CAD-911 Medical Dispatch' : resultPayload.category === 'WEATHER' ? 'FEMA Civic Incident Network' : 'DOT Transit System',
         protocolCode: 'RFC-8259-TRIAGE',
-        category: data.category,
-        urgencyLevel: data.urgencyLevel,
+        category: resultPayload.category,
+        urgencyLevel: resultPayload.urgencyLevel,
         statusCode: 200,
         latencyMs: latency,
-        location: data.extractedEntities?.location || detectedLocation || 'Local Sector',
+        location: resultPayload.extractedEntities?.location || detectedLocation || 'Local Sector',
         assignedUnits: ['Auto-Triage', 'Gemini-2.5-Flash'],
-        payloadSummary: data.summary,
+        payloadSummary: resultPayload.summary,
         verifiedStatus: 'VERIFIED',
       });
 
@@ -117,16 +119,17 @@ export default function DashboardPage() {
           setDetectedLocation={setDetectedLocation}
         />
 
-        {/* Dynamic Analysis Result Workspace */}
+        {/* Dynamic Analysis Result Workspace (Action Solution) */}
         {output && (
-          <RaycastResultWorkspace output={output} />
+          <div className="pt-2">
+            <RaycastResultWorkspace output={output} />
+          </div>
         )}
 
-        {/* Live Community Signals Feed */}
-        <RaycastCommunitySignals />
-
-        {/* Active Incident Case Timeline */}
-        <CaseTimelineSection />
+        {/* Live Regional Safety & Resource Radar Map */}
+        <div className="pt-2">
+          <LiveSafetyMap />
+        </div>
       </main>
 
       {/* API Key Modal */}

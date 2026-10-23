@@ -59,8 +59,36 @@ body {
   }
 }
 
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.9;
+  }
+}
+
 .animate-subtle-glow {
   animation: subtle-ambient-drift 18s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 8s ease-in-out infinite;
 }
 
 /* Crisp 1px Technical Grid Overlay */
@@ -80,29 +108,48 @@ body {
 
 .raycast-panel {
   background: rgba(17, 24, 39, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .raycast-panel:hover {
-  border-color: rgba(79, 140, 255, 0.3);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 16px 40px rgba(3, 11, 28, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .raycast-item {
   background: transparent;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid transparent;
-  transition: all 150ms ease;
+  transition: all 180ms ease;
 }
 
 .raycast-item:hover, .raycast-item.active {
   background: rgba(23, 32, 51, 0.85);
-  border-color: rgba(79, 140, 255, 0.25);
+  border-color: rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
+}
+
+.glow-card {
+  position: relative;
+  transition: all 250ms ease;
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(129, 140, 248, 0.1), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* Kbd Shortcut Styling */

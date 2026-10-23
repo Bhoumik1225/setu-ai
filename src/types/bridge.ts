@@ -56,6 +56,7 @@ export interface CaseTimelineItem {
 export interface BridgeOutput {
   urgencyLevel: UrgencyLevel;
   urgencyLabel?: 'Routine' | 'Attention Needed' | 'Urgent' | 'Critical';
+  urgencyReason?: string;
   category: Category;
   summary: string;
   situationTitle?: string;

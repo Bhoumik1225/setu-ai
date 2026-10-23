@@ -88,17 +88,18 @@ export const RaycastQuickActionsGrid: React.FC<RaycastQuickActionsGridProps> = (
                   onSelectAction(act.prompt);
                 }
               }}
-              className="p-3 rounded-xl bg-[#111827] border border-white/6 hover:border-[#4F8CFF]/30 transition-all text-left flex flex-col justify-between gap-2 group cursor-pointer shadow-sm hover:-translate-y-0.5"
+              className="p-3.5 rounded-xl bg-[#0F172A]/80 backdrop-blur-md border border-white/8 hover:border-sky-400/40 transition-all duration-200 text-left flex flex-col justify-between gap-2.5 group cursor-pointer shadow-md shadow-black/20 hover:-translate-y-1 hover:shadow-sky-950/40 relative overflow-hidden"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className={`p-2 rounded-lg border ${act.color}`}>
-                  <Icon className="w-3.5 h-3.5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="flex items-center justify-between w-full relative z-10">
+                <div className={`p-2 rounded-lg border shadow-sm ${act.color}`}>
+                  <Icon className="w-4 h-4" />
                 </div>
-                <ArrowRight className="w-3 h-3 text-[#94A3B8]/40 group-hover:text-white transition-colors" />
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-sky-300 transition-all group-hover:translate-x-0.5" />
               </div>
-              <div className="space-y-0.5 min-w-0">
-                <span className="text-xs font-bold text-white block truncate">{act.title}</span>
-                <span className="text-[10px] text-[#94A3B8] block line-clamp-1">{act.desc}</span>
+              <div className="space-y-0.5 min-w-0 relative z-10">
+                <span className="text-xs font-bold text-white block truncate group-hover:text-sky-100 transition-colors">{act.title}</span>
+                <span className="text-[10px] text-slate-400 block line-clamp-1">{act.desc}</span>
               </div>
             </button>
           );

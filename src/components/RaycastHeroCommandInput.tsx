@@ -19,9 +19,12 @@ import {
   Paperclip,
   Activity,
   Layers,
+  Siren,
+  Hospital,
 } from 'lucide-react';
 import { MultimodalPayloadItem } from '@/types/bridge';
 import { useAuth } from '@/context/AuthContext';
+import { DispatchHospitalModal } from '@/components/DispatchHospitalModal';
 
 interface RaycastHeroCommandInputProps {
   textPrompt: string;
@@ -53,16 +56,16 @@ export const RaycastHeroCommandInput: React.FC<RaycastHeroCommandInputProps> = (
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [processingStageIndex, setProcessingStageIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isAmbulanceModalOpen, setIsAmbulanceModalOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // 5-Stage Working Analysis Flow
+  // Exact 4 requested analysis stages
   const analysisStages = [
-    { label: 'Input received & sanitized', sub: 'Multimodal payload parsed' },
-    { label: 'Gemini extracts key facts', sub: 'Reasoning across text, audio, images' },
-    { label: 'Urgency & risks assessed', sub: 'Comparing with emergency protocols' },
-    { label: 'Evidence & uncertainty checked', sub: 'Cross-verifying source fidelity' },
-    { label: 'Safe action plan created', sub: 'Ready for coordinated dispatch' },
+    { label: 'Understanding your situation', sub: 'Parsing multimodal input signals' },
+    { label: 'Extracting important details', sub: 'Corroborating key facts & entities' },
+    { label: 'Checking urgency and safety', sub: 'Assessing severity & hazard criteria' },
+    { label: 'Creating your action plan', sub: 'Synthesizing safe immediate guidance' },
   ];
 
   useEffect(() => {
@@ -210,8 +213,10 @@ export const RaycastHeroCommandInput: React.FC<RaycastHeroCommandInputProps> = (
         }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
-        className={`rounded-2xl border transition-all bg-[#111827] shadow-2xl relative overflow-hidden ${
-          isDragging ? 'border-[#4F8CFF] ring-2 ring-[#4F8CFF]/20 bg-[#172033]' : 'border-white/10 hover:border-white/20'
+        className={`rounded-2xl border transition-all glow-card bg-[#0D1527]/85 backdrop-blur-2xl shadow-2xl relative overflow-hidden ${
+          isDragging
+            ? 'border-[#38BDF8] ring-4 ring-[#38BDF8]/20 bg-[#13223F]'
+            : 'border-white/10 hover:border-sky-400/35 shadow-sky-950/20'
         }`}
       >
         <textarea
@@ -319,16 +324,26 @@ export const RaycastHeroCommandInput: React.FC<RaycastHeroCommandInputProps> = (
             </button>
           </div>
 
-          {/* Submit Action Button */}
-          <div className="flex items-center gap-2">
-            <span className="hidden sm:inline text-[11px] text-[#94A3B8] font-mono">⌘↵</span>
+          {/* Submit & Ambulance Dispatch Buttons */}
+          <div className="flex items-center gap-2.5 flex-wrap">
+            {/* Quick 1-Click Nearby Ambulance Dispatch Trigger */}
+            <button
+              onClick={() => setIsAmbulanceModalOpen(true)}
+              className="px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 cursor-pointer bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white shadow-lg shadow-rose-600/30 hover:shadow-rose-600/50 active:scale-95 transition-all animate-pulse"
+              title="Instant 1-Click Nearby Hospital Ambulance Dispatch"
+            >
+              <Siren className="w-4 h-4 animate-bounce" />
+              <span>Call Nearby Ambulance</span>
+            </button>
+
+            <span className="hidden sm:inline text-[11px] text-[#94A3B8] font-mono tracking-wider">⌘↵</span>
             <button
               onClick={onProcess}
               disabled={isProcessing || (!textPrompt.trim() && files.length === 0 && !sourceLink)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer transition-all ${
+              className={`px-4.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer transition-all ${
                 isProcessing
-                  ? 'bg-[#4F8CFF]/50 text-white cursor-wait'
-                  : 'bg-[#4F8CFF] hover:bg-[#3B72E0] text-white shadow-lg shadow-[#4F8CFF]/25 active:scale-95'
+                  ? 'bg-sky-500/50 text-white cursor-wait'
+                  : 'bg-gradient-to-r from-blue-600 via-sky-500 to-blue-600 hover:from-blue-500 hover:to-sky-400 text-white shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 active:scale-95'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -381,12 +396,12 @@ export const RaycastHeroCommandInput: React.FC<RaycastHeroCommandInputProps> = (
               Gemini 2.5 Multi-Stage Reasoning in Progress...
             </span>
             <span className="text-xs font-mono text-[#4F8CFF]">
-              Stage {processingStageIndex + 1} of 5
+              Stage {processingStageIndex + 1} of 4
             </span>
           </div>
 
           {/* Stepper bar */}
-          <div className="grid grid-cols-5 gap-1.5">
+          <div className="grid grid-cols-4 gap-2">
             {analysisStages.map((stage, idx) => {
               const isActive = idx === processingStageIndex;
               const isPast = idx < processingStageIndex;
@@ -428,6 +443,14 @@ export const RaycastHeroCommandInput: React.FC<RaycastHeroCommandInputProps> = (
           ))}
         </div>
       </div>
+
+      {/* Instant 1-Click Nearby Hospital Ambulance Dispatch Modal */}
+      <DispatchHospitalModal
+        isOpen={isAmbulanceModalOpen}
+        onClose={() => setIsAmbulanceModalOpen(false)}
+        situationContext={textPrompt.trim() || 'Acute Emergency Medical Triage Signal'}
+        location={detectedLocation || 'Sector 4 Metro Corridor'}
+      />
     </div>
   );
 };

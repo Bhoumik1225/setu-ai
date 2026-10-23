@@ -22,8 +22,11 @@ import {
   Flame,
   FileCheck,
   UserCheck,
+  Siren,
+  Hospital,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { DispatchHospitalModal } from '@/components/DispatchHospitalModal';
 
 interface RaycastResultWorkspaceProps {
   output: BridgeOutput;
@@ -38,6 +41,7 @@ export const RaycastResultWorkspace: React.FC<RaycastResultWorkspaceProps> = ({
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [showTrustDetails, setShowTrustDetails] = useState<boolean>(false);
   const [isEscalated, setIsEscalated] = useState<boolean>(false);
+  const [isAmbulanceModalOpen, setIsAmbulanceModalOpen] = useState<boolean>(false);
 
   const getUrgencyBadge = (level: string) => {
     switch (level) {
@@ -110,7 +114,7 @@ export const RaycastResultWorkspace: React.FC<RaycastResultWorkspaceProps> = ({
       category: output.category,
       urgency: 'CRITICAL',
       status: 'Escalated',
-      location: output.extractedEntities.location || 'Local Sector',
+      location: output.extractedEntities?.location || 'Local Sector',
       summary: output.summary,
       actionSummary: 'Escalated to human supervisor on emergency hotline.',
     });
@@ -143,6 +147,15 @@ export const RaycastResultWorkspace: React.FC<RaycastResultWorkspaceProps> = ({
               {output.situationTitle || 'Verified Situation Assessment'}
             </h2>
           </div>
+
+          {/* Instant Call Nearby Ambulance Button */}
+          <button
+            onClick={() => setIsAmbulanceModalOpen(true)}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-rose-600/35 hover:shadow-rose-600/50 cursor-pointer active:scale-95 transition-all animate-pulse"
+          >
+            <Siren className="w-4 h-4 animate-bounce" />
+            <span>Call Nearby Hospital Ambulance</span>
+          </button>
 
           {/* 0-100 Confidence Meter */}
           <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#172033]/80 border border-white/6 shrink-0">
@@ -366,6 +379,14 @@ export const RaycastResultWorkspace: React.FC<RaycastResultWorkspaceProps> = ({
           {isEscalated ? 'Escalated to Human' : 'Escalate to Human Reviewer'}
         </button>
       </div>
+
+      {/* Emergency Ambulance Dispatch Radar Modal */}
+      <DispatchHospitalModal
+        isOpen={isAmbulanceModalOpen}
+        onClose={() => setIsAmbulanceModalOpen(false)}
+        situationContext={output.summary || output.situationTitle || 'Immediate Medical Emergency'}
+        location={output.extractedEntities?.location || 'Sector 4 Metro'}
+      />
     </div>
   );
 };

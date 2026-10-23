@@ -4,7 +4,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DispatchLogEntry, CaseTimelineItem } from '@/types/bridge';
 import { SETU_DISPATCH_LOGS } from '@/data/setuDemoData';
 
-export type LanguageCode = 'en' | 'hi' | 'hinglish';
+export type LanguageCode =
+  | 'en'
+  | 'hi'
+  | 'hinglish'
+  | 'es'
+  | 'fr'
+  | 'de'
+  | 'ar'
+  | 'bn'
+  | 'ja';
 export type TextSize = 'normal' | 'lg' | 'xl';
 export type BackgroundQuality = 'low' | 'balanced' | 'high';
 

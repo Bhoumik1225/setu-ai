@@ -1,116 +1,153 @@
 'use client';
 
-import React from 'react';
-import { useAuth } from '@/context/AuthContext';
+import React, { useState, useRef, useEffect } from 'react';
+import { useAuth, LanguageCode } from '@/context/AuthContext';
 import {
   Search,
-  Command,
-  Sliders,
-  Sparkles,
   HelpCircle,
-  Radio,
-  Bell,
   Languages,
-  CheckCircle2,
-  Shield,
   Key,
+  ChevronDown,
+  Check,
+  Globe2,
 } from 'lucide-react';
 
 interface RaycastTopBarProps {
   onOpenKeyModal?: () => void;
 }
 
+const LANGUAGES_LIST: { code: LanguageCode; name: string; nativeName: string; flag: string }[] = [
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'hinglish', name: 'Hinglish', nativeName: 'Hinglish', flag: '🇮🇳' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+  { code: 'bn', name: 'Bengali', nativeName: 'বাংলা', flag: '🇧🇩' },
+  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+];
+
 export const RaycastTopBar: React.FC<RaycastTopBarProps> = ({ onOpenKeyModal }) => {
   const {
     setIsCommandPaletteOpen,
     setIsShortcutsOpen,
-    setIsContextPanelOpen,
     apiKey,
     language,
     setLanguage,
-    ambientMotion,
-    setAmbientMotion,
-    cases,
   } = useAuth();
 
-  const handleCycleLanguage = () => {
-    const nextLang = language === 'en' ? 'hi' : language === 'hi' ? 'hinglish' : 'en';
-    setLanguage(nextLang);
-  };
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsLangDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const currentLangObj = LANGUAGES_LIST.find((l) => l.code === language) || LANGUAGES_LIST[0];
 
   return (
-    <header className="sticky top-0 z-20 w-full bg-[#080B12]/80 backdrop-blur-xl border-b border-white/8 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-30 w-full bg-[#080B12]/85 backdrop-blur-2xl border-b border-white/10 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
       {/* Search / Command Bar Trigger */}
       <div className="flex-1 max-w-xl">
         <button
           onClick={() => setIsCommandPaletteOpen(true)}
-          className="w-full flex items-center justify-between px-3.5 py-1.5 rounded-xl bg-[#111827]/80 border border-white/8 hover:border-[#4F8CFF]/40 text-[#94A3B8] hover:text-white transition-all cursor-pointer shadow-sm group text-left"
+          className="w-full flex items-center justify-between px-3.5 py-1.5 rounded-xl bg-[#0F172A]/80 border border-white/10 hover:border-sky-400/50 text-slate-400 hover:text-white transition-all cursor-pointer shadow-sm group text-left"
         >
           <div className="flex items-center gap-2.5 text-xs">
-            <Search className="w-3.5 h-3.5 text-[#4F8CFF] group-hover:scale-110 transition-transform" />
+            <Search className="w-3.5 h-3.5 text-sky-400 group-hover:scale-110 transition-transform" />
             <span className="hidden sm:inline">Search commands, active cases, triage protocols...</span>
             <span className="sm:hidden">Search commands...</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <kbd>⌘K</kbd>
+            <kbd className="px-1.5 py-0.5 text-[10px] bg-white/5 border border-white/10 rounded text-slate-400 font-mono">⌘K</kbd>
           </div>
         </button>
       </div>
 
-      {/* Top Right Quick Settings & Telemetry */}
+      {/* Top Right Controls: AI Engine, Major Languages Dropdown, Help */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* Gemini Engine Status Pill */}
         <div
           onClick={onOpenKeyModal}
-          className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#111827] border border-white/8 hover:border-[#4F8CFF]/40 transition-colors text-[11px] font-mono text-[#4F8CFF] cursor-pointer"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-950/70 border border-blue-500/30 hover:border-blue-400 transition-colors text-[11px] font-mono text-blue-300 cursor-pointer shadow-sm"
         >
-          <span className="w-2 h-2 rounded-full bg-[#34D399] animate-pulse" />
-          <span>{apiKey ? 'Gemini 2.5 Active' : 'SETU Engine Simulator'}</span>
-          <Key className="w-3 h-3 text-[#94A3B8]" />
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="hidden xs:inline">{apiKey ? 'Gemini 2.5 Active' : 'AI Engine Ready'}</span>
+          <span className="xs:hidden">AI</span>
+          <Key className="w-3 h-3 text-blue-300/70" />
         </div>
 
-        {/* Language Cycle Pill */}
-        <button
-          onClick={handleCycleLanguage}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#111827] border border-white/8 hover:border-white/20 transition-colors text-[11px] font-mono text-[#F8FAFC] cursor-pointer"
-          title="Cycle Language (EN / HI / Hinglish)"
-        >
-          <Languages className="w-3 h-3 text-[#A78BFA]" />
-          <span>{language.toUpperCase()}</span>
-        </button>
+        {/* Major Languages Selector Dropdown */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0F172A]/90 border border-white/10 hover:border-sky-400/50 transition-all text-xs text-white cursor-pointer shadow-sm"
+            title="Select Major Language"
+          >
+            <Globe2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+            <span className="text-sm leading-none">{currentLangObj.flag}</span>
+            <span className="font-medium hidden sm:inline">{currentLangObj.name}</span>
+            <span className="font-mono text-[10px] text-slate-400 sm:hidden uppercase">{currentLangObj.code}</span>
+            <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
 
-        {/* Ambient Motion Toggle */}
-        <button
-          onClick={() => setAmbientMotion(!ambientMotion)}
-          className={`p-1.5 rounded-lg border transition-colors cursor-pointer text-xs ${
-            ambientMotion
-              ? 'bg-[#4F8CFF]/15 border-[#4F8CFF]/30 text-[#4F8CFF]'
-              : 'bg-[#111827] border-white/8 text-[#94A3B8]'
-          }`}
-          title={`Ambient Background Motion: ${ambientMotion ? 'ON' : 'OFF'}`}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-        </button>
-
-        {/* Smart Context Panel Trigger */}
-        <button
-          onClick={() => setIsContextPanelOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#111827] border border-white/8 hover:border-[#34D399]/40 transition-colors text-[11px] text-[#34D399] cursor-pointer font-medium"
-        >
-          <Radio className="w-3.5 h-3.5 animate-pulse" />
-          <span className="hidden sm:inline">Signals</span>
-          <span className="px-1 py-0.2 rounded text-[9px] bg-[#34D399]/15 font-bold">
-            {cases.length}
-          </span>
-        </button>
+          {/* Language Options Dropdown Menu */}
+          {isLangDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#0D1527]/95 backdrop-blur-2xl border border-sky-500/30 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="px-2.5 py-1.5 border-b border-white/10 mb-1 flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+                  Major Languages
+                </span>
+                <span className="text-[10px] text-sky-400 font-mono font-bold">
+                  {LANGUAGES_LIST.length} Supported
+                </span>
+              </div>
+              <div className="max-h-64 overflow-y-auto space-y-1">
+                {LANGUAGES_LIST.map((lang) => {
+                  const isSelected = language === lang.code;
+                  return (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setLanguage(lang.code);
+                        setIsLangDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors cursor-pointer text-left ${
+                        isSelected
+                          ? 'bg-sky-500/20 text-sky-300 border border-sky-400/40 font-semibold'
+                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-base leading-none">{lang.flag}</span>
+                        <div className="truncate">
+                          <span className="block truncate">{lang.name}</span>
+                          <span className="text-[10px] text-slate-400 block font-normal">{lang.nativeName}</span>
+                        </div>
+                      </div>
+                      {isSelected && <Check className="w-3.5 h-3.5 text-sky-400 shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Help Keyboard Shortcuts Trigger */}
         <button
           onClick={() => setIsShortcutsOpen(true)}
-          className="p-1.5 rounded-lg bg-[#111827] border border-white/8 hover:border-white/20 text-[#94A3B8] hover:text-white transition-colors cursor-pointer text-xs"
+          className="p-1.5 rounded-xl bg-[#0F172A]/80 border border-white/10 hover:border-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs"
           title="Keyboard Shortcuts (?)"
         >
-          <HelpCircle className="w-3.5 h-3.5" />
+          <HelpCircle className="w-4 h-4" />
         </button>
       </div>
     </header>
