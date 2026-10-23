@@ -1,11 +1,14 @@
 export type UrgencyLevel = 'ROUTINE' | 'NEEDS_ATTENTION' | 'URGENT' | 'CRITICAL' | 'LOW' | 'MEDIUM' | 'HIGH';
 export type Category = 'MEDICAL' | 'DISASTER' | 'INFRASTRUCTURE' | 'ROAD_SAFETY' | 'WEATHER' | 'CIVIC' | 'GENERAL';
 
+export type CaseStatus = 'Draft' | 'Analysing' | 'Awaiting Verification' | 'Action Ready' | 'Escalated' | 'Resolved';
+
 export interface ActionPlanStep {
   step: number;
   title: string;
   instruction: string;
   isImmediate: boolean;
+  completed?: boolean;
 }
 
 export interface NearbyEmergencyService {
@@ -24,6 +27,8 @@ export interface VerificationProfile {
   requiresHumanConfirmation: string[];
   privacyStatus: string;
   isCredible: boolean;
+  limitations?: string[];
+  whyRecommendation?: string;
 }
 
 export interface CommunitySignal {
@@ -34,6 +39,18 @@ export interface CommunitySignal {
   location: string;
   timeAgo: string;
   impactScore: string;
+}
+
+export interface CaseTimelineItem {
+  id: string;
+  title: string;
+  category: Category;
+  urgency: UrgencyLevel;
+  status: CaseStatus;
+  timestamp: string;
+  location?: string;
+  summary: string;
+  actionSummary?: string;
 }
 
 export interface BridgeOutput {
@@ -63,6 +80,7 @@ export interface BridgeOutput {
     missingCriticalInfo: string[];
   };
   simulatedApiPayload: Record<string, any>;
+  medicalDisclaimerNeeded?: boolean;
 }
 
 export interface MultimodalPayloadItem {

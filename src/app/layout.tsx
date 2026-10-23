@@ -3,6 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { CommandPalette } from "@/components/CommandPalette";
+import { KeyboardShortcutsModal } from "@/components/KeyboardShortcutsModal";
+import { SmartContextPanel } from "@/components/SmartContextPanel";
+import { AppShellSidebar } from "@/components/AppShellSidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SETU AI — Tell SETU what happened. We’ll turn it into safe action.",
-  description: "A Gemini-powered emergency-grade social-impact bridge transforming chaotic human multimodal inputs into verified life-saving next steps.",
+  title: "SETU AI — Turn real-world signals into safe action.",
+  description: "A fast, Raycast-inspired emergency-grade social-impact operating system transforming chaotic human multimodal inputs into verified life-saving next steps.",
 };
 
 export default function RootLayout({
@@ -29,12 +33,27 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col text-[#F8FAFC] selection:bg-[#06B6D4] selection:text-[#020617] relative overflow-x-hidden">
+      <body className="min-h-full flex text-[#F8FAFC] selection:bg-[#4F8CFF] selection:text-white relative overflow-x-hidden bg-[#080B12]">
         <AuthProvider>
-          {/* Universal Multi-Color Animated Background Across the Entire Website */}
+          {/* Calm, Refined Command Center Ambient Background */}
           <AnimatedBackground pageVariant="dashboard" />
 
-          {children}
+          {/* Desktop Slim Sidebar & Mobile Bottom Navigation */}
+          <AppShellSidebar />
+
+          {/* Main App Content Area with left margin on desktop to accommodate sidebar */}
+          <div className="flex-1 flex flex-col min-h-screen lg:pl-64 pb-16 lg:pb-0 w-full">
+            {children}
+          </div>
+
+          {/* Global Signature Command Palette (⌘K / Ctrl+K) */}
+          <CommandPalette />
+
+          {/* Global Keyboard Shortcuts Helper (?) */}
+          <KeyboardShortcutsModal />
+
+          {/* Global Smart Context Panel (Sliding Right Drawer) */}
+          <SmartContextPanel />
         </AuthProvider>
       </body>
     </html>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { DispatchLogEntry } from '@/types/bridge';
+import { DispatchLogEntry, CaseTimelineItem } from '@/types/bridge';
 import { SETU_DISPATCH_LOGS } from '@/data/setuDemoData';
 
 export type LanguageCode = 'en' | 'hi' | 'hinglish';
@@ -14,6 +14,53 @@ interface ToastMessage {
   message: string;
 }
 
+const INITIAL_CASES: CaseTimelineItem[] = [
+  {
+    id: 'CASE-8941',
+    title: 'Senior Citizen Cardiac & Prescription Alert',
+    category: 'MEDICAL',
+    urgency: 'CRITICAL',
+    status: 'Action Ready',
+    timestamp: '8 mins ago',
+    location: 'Sector 4, Green Valley',
+    summary: 'Patient reports severe chest tightness. Digoxin and Metoprolol medication history flagged.',
+    actionSummary: 'Dispatched Metro Trauma EMS Unit 4 and alerted on-call cardiologist.',
+  },
+  {
+    id: 'CASE-8939',
+    title: 'Highway Flash Flood & Trapped Commuters',
+    category: 'WEATHER',
+    urgency: 'URGENT',
+    status: 'Escalated',
+    timestamp: '24 mins ago',
+    location: 'Underpass Mile 14',
+    summary: 'Water level crossed 3 feet. 4 passenger sedans stalled with occupants inside.',
+    actionSummary: 'Municipal drainage pump team deployed, traffic diversion route opened.',
+  },
+  {
+    id: 'CASE-8935',
+    title: 'Fallen High-Voltage Line Over Pedestrian Walkway',
+    category: 'CIVIC',
+    urgency: 'NEEDS_ATTENTION',
+    status: 'Resolved',
+    timestamp: '1 hour ago',
+    location: 'Central Avenue Metro Station',
+    summary: 'Live cable sparking after storm gust. High pedestrian footfall area.',
+    actionSummary: 'Grid power cut within 4 minutes, safety perimeter established.',
+  },
+  {
+    id: 'CASE-8928',
+    title: 'Elderly Assistance & Insulin Cold Storage',
+    category: 'GENERAL',
+    urgency: 'ROUTINE',
+    status: 'Resolved',
+    timestamp: '3 hours ago',
+    location: 'Sunrise Retirement Village',
+    summary: 'Power outage threatened insulin supply temperature stability.',
+    actionSummary: 'Volunteer team supplied portable solar refrigeration unit.',
+  },
+];
+
 interface AuthContextType {
   isAuthenticated: boolean;
   userEmail: string | null;
@@ -23,6 +70,9 @@ interface AuthContextType {
   setApiKey: (key: string) => void;
   logs: DispatchLogEntry[];
   addLog: (log: Omit<DispatchLogEntry, 'id' | 'timestamp'>) => void;
+  cases: CaseTimelineItem[];
+  addCase: (item: Omit<CaseTimelineItem, 'id' | 'timestamp'>) => void;
+  updateCaseStatus: (id: string, status: CaseTimelineItem['status']) => void;
   language: LanguageCode;
   setLanguage: (lang: LanguageCode) => void;
   textSize: TextSize;
@@ -33,6 +83,14 @@ interface AuthContextType {
   setAmbientMotion: (val: boolean) => void;
   backgroundQuality: BackgroundQuality;
   setBackgroundQuality: (quality: BackgroundQuality) => void;
+  isCommandPaletteOpen: boolean;
+  setIsCommandPaletteOpen: (open: boolean) => void;
+  isShortcutsOpen: boolean;
+  setIsShortcutsOpen: (open: boolean) => void;
+  isContextPanelOpen: boolean;
+  setIsContextPanelOpen: (open: boolean) => void;
+  selectedContextCase: CaseTimelineItem | null;
+  setSelectedContextCase: (item: CaseTimelineItem | null) => void;
   notifications: string[];
   toasts: ToastMessage[];
   addToast: (msg: string, type?: 'success' | 'info' | 'warning' | 'error') => void;
@@ -43,14 +101,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-  const [userEmail, setUserEmail] = useState<string | null>('evaluator@setu.ai');
+  const [userEmail, setUserEmail] = useState<string | null>('judge.evaluator@google.com');
   const [apiKey, setApiKey] = useState<string>('');
   const [logs, setLogs] = useState<DispatchLogEntry[]>(SETU_DISPATCH_LOGS);
+  const [cases, setCases] = useState<CaseTimelineItem[]>(INITIAL_CASES);
   const [language, setLanguage] = useState<LanguageCode>('en');
   const [textSize, setTextSize] = useState<TextSize>('normal');
   const [highContrast, setHighContrast] = useState<boolean>(false);
   const [ambientMotion, setAmbientMotion] = useState<boolean>(true);
   const [backgroundQuality, setBackgroundQuality] = useState<BackgroundQuality>('balanced');
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState<boolean>(false);
+  const [isContextPanelOpen, setIsContextPanelOpen] = useState<boolean>(false);
+  const [selectedContextCase, setSelectedContextCase] = useState<CaseTimelineItem | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const notifications = [
@@ -76,12 +139,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const storedLogs = localStorage.getItem('setu_dispatch_logs');
       if (storedLogs) setLogs(JSON.parse(storedLogs));
 
+      const storedCases = localStorage.getItem('setu_timeline_cases');
+      if (storedCases) setCases(JSON.parse(storedCases));
+
       const storedMotion = localStorage.getItem('setu_ambient_motion');
       if (storedMotion !== null) setAmbientMotion(storedMotion === 'true');
-
-      const storedQual = localStorage.getItem('setu_bg_quality') as BackgroundQuality;
-      if (storedQual) setBackgroundQuality(storedQual);
     } catch (e) {}
+  }, []);
+
+  // Global Keyboard Shortcuts (⌘K for command palette, ? for shortcuts panel)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts when user is typing in form inputs, except for Cmd+K / Ctrl+K
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      } else if (e.key === '?' && !isInput) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+      } else if (e.key === 'Escape') {
+        setIsCommandPaletteOpen(false);
+        setIsShortcutsOpen(false);
+        setIsContextPanelOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const login = (email: string) => {
@@ -146,12 +233,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const addCase = (caseData: Omit<CaseTimelineItem, 'id' | 'timestamp'>) => {
+    const newCase: CaseTimelineItem = {
+      ...caseData,
+      id: `CASE-${Math.floor(1000 + Math.random() * 9000)}`,
+      timestamp: 'Just now',
+    };
+    setCases((prev) => {
+      const updated = [newCase, ...prev];
+      try {
+        localStorage.setItem('setu_timeline_cases', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const updateCaseStatus = (id: string, status: CaseTimelineItem['status']) => {
+    setCases((prev) => {
+      const updated = prev.map((c) => (c.id === id ? { ...c, status } : c));
+      try {
+        localStorage.setItem('setu_timeline_cases', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    addToast(`Case ${id} updated to ${status}`, 'info');
+  };
+
   const addToast = (message: string, type: 'success' | 'info' | 'warning' | 'error' = 'info') => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, 3500);
   };
 
   const removeToast = (id: string) => {
@@ -169,6 +282,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setApiKey: handleSetApiKey,
         logs,
         addLog,
+        cases,
+        addCase,
+        updateCaseStatus,
         language,
         setLanguage: handleSetLanguage,
         textSize,
@@ -179,6 +295,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setAmbientMotion: handleSetAmbientMotion,
         backgroundQuality,
         setBackgroundQuality: handleSetBackgroundQuality,
+        isCommandPaletteOpen,
+        setIsCommandPaletteOpen,
+        isShortcutsOpen,
+        setIsShortcutsOpen,
+        isContextPanelOpen,
+        setIsContextPanelOpen,
+        selectedContextCase,
+        setSelectedContextCase,
         notifications,
         toasts,
         addToast,
@@ -188,25 +312,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       <div className={`${highContrast ? 'high-contrast' : ''} ${textSize === 'lg' ? 'text-size-lg' : textSize === 'xl' ? 'text-size-xl' : ''}`}>
         {children}
 
-        {/* Floating Toast Notification Container */}
+        {/* Floating Toast Notification Container (Raycast style) */}
         <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
           {toasts.map((toast) => (
             <div
               key={toast.id}
-              className={`pointer-events-auto px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-xl border text-xs font-medium flex items-center justify-between gap-3 animate-fade-in ${
+              className={`pointer-events-auto px-4 py-2.5 rounded-xl shadow-2xl backdrop-blur-xl border text-xs font-medium flex items-center justify-between gap-3 transition-all ${
                 toast.type === 'success'
-                  ? 'bg-[#071A38]/95 border-[#06B6D4]/40 text-[#06B6D4]'
+                  ? 'bg-[#111827]/95 border-[#34D399]/40 text-[#34D399]'
                   : toast.type === 'error'
-                  ? 'bg-[#071A38]/95 border-[#FB7185]/40 text-[#FB7185]'
+                  ? 'bg-[#111827]/95 border-[#FB7185]/40 text-[#FB7185]'
                   : toast.type === 'warning'
-                  ? 'bg-[#071A38]/95 border-[#FBBF24]/40 text-[#FBBF24]'
-                  : 'bg-[#071A38]/95 border-white/10 text-slate-200'
+                  ? 'bg-[#111827]/95 border-[#FBBF24]/40 text-[#FBBF24]'
+                  : 'bg-[#111827]/95 border-white/10 text-[#F8FAFC]'
               }`}
             >
               <span>{toast.message}</span>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="opacity-70 hover:opacity-100 text-xs ml-2 cursor-pointer"
+                className="opacity-60 hover:opacity-100 text-xs ml-2 cursor-pointer"
               >
                 ✕
               </button>
