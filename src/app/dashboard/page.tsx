@@ -94,7 +94,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen text-[#F8FAFC]">
+    <div className="flex-1 flex flex-col min-h-screen text-[#F8FAFC] lg:pl-64">
       {/* Top Search & Command Header */}
       <RaycastTopBar onOpenKeyModal={() => setIsKeyModalOpen(true)} />
 

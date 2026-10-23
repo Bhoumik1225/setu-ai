@@ -36,18 +36,14 @@ export default function LoginPage() {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      login(email);
-      router.push('/dashboard');
-    }, 350);
+    login(email);
+    window.location.href = '/dashboard';
   };
 
   const handleJudgeAccess = () => {
     setLoading(true);
-    setTimeout(() => {
-      login('judge.hackathon@google.com');
-      router.push('/dashboard');
-    }, 300);
+    login('judge.hackathon@google.com');
+    window.location.href = '/dashboard';
   };
 
   const featurePillars = [

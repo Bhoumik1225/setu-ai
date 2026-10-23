@@ -41,8 +41,8 @@ export default function RootLayout({
           {/* Desktop Slim Sidebar & Mobile Bottom Navigation */}
           <AppShellSidebar />
 
-          {/* Main App Content Area with left margin on desktop to accommodate sidebar */}
-          <div className="flex-1 flex flex-col min-h-screen lg:pl-64 pb-16 lg:pb-0 w-full">
+          {/* Main App Content Area */}
+          <div className="flex-1 flex flex-col min-h-screen pb-16 lg:pb-0 w-full">
             {children}
           </div>
 

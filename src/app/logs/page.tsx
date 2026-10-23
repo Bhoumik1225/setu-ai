@@ -117,7 +117,7 @@ export default function LogsPage() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen text-[#F8FAFC]">
+    <div className="flex-1 flex flex-col min-h-screen text-[#F8FAFC] lg:pl-64">
       <RaycastTopBar />
 
       <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">

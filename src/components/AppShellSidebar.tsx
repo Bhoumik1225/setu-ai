@@ -19,7 +19,11 @@ import {
   Zap,
 } from 'lucide-react';
 
-export const AppShellSidebar: React.FC = () => {
+interface AppShellSidebarProps {
+  children?: React.ReactNode;
+}
+
+export const AppShellSidebar: React.FC<AppShellSidebarProps> = () => {
   const pathname = usePathname();
   const {
     userEmail,
@@ -29,6 +33,8 @@ export const AppShellSidebar: React.FC = () => {
     setIsContextPanelOpen,
     cases,
   } = useAuth();
+
+  const isLoginPage = pathname === '/login';
 
   const navLinks = [
     {
@@ -52,6 +58,10 @@ export const AppShellSidebar: React.FC = () => {
       active: pathname === '/login',
     },
   ];
+
+  if (isLoginPage) {
+    return null;
+  }
 
   return (
     <>
