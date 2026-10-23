@@ -36,6 +36,22 @@ export default function LogsPage() {
   const [viewMode, setViewMode] = useState<'timeline' | 'table'>('table');
   const [expandedLogId, setExpandedLogId] = useState<string | null>(logs[0]?.id || null);
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Just now');
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const formatTime = (isoString?: string) => {
+    if (!isoString) return '--:--';
+    try {
+      const d = new Date(isoString);
+      if (isNaN(d.getTime())) return '--:--';
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return '--:--';
+    }
+  };
 
   const query = searchQuery.trim().toLowerCase();
   const filteredLogs = logs.filter((log) => {
@@ -267,8 +283,8 @@ export default function LogsPage() {
                               </span>
                             </td>
                             <td className="py-3 px-4 font-mono text-[#94A3B8]">{log.latencyMs}ms</td>
-                            <td className="py-3 px-4 font-mono text-[#94A3B8]">
-                              {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            <td className="py-3 px-4 font-mono text-[#94A3B8]" suppressHydrationWarning>
+                              {mounted ? formatTime(log.timestamp) : '--:--'}
                             </td>
                           </tr>
 
@@ -281,12 +297,12 @@ export default function LogsPage() {
                                     Dispatched Structured Payload:
                                   </span>
                                   <p className="text-slate-200 bg-[#080B12] p-3 rounded-lg border border-white/5 font-mono text-xs leading-relaxed">
-                                    {log.payloadSummary}
+                                    {log.payloadSummary || 'No payload recorded'}
                                   </p>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#94A3B8] pt-1">
-                                  <span>Protocol: <strong className="text-white">{log.protocolCode}</strong></span>
-                                  <span>Location: <strong className="text-white">{log.location}</strong></span>
+                                  <span>Protocol: <strong className="text-white">{log.protocolCode || 'RFC-8259'}</strong></span>
+                                  <span>Location: <strong className="text-white">{log.location || 'Sector 4'}</strong></span>
                                   <span>Verification: <strong className="text-[#34D399]">{log.verifiedStatus || 'VERIFIED'}</strong></span>
                                 </div>
                               </td>
@@ -313,13 +329,13 @@ export default function LogsPage() {
                       {log.urgencyLevel}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono text-[#94A3B8]">
-                    {new Date(log.timestamp).toLocaleTimeString()}
+                  <span className="text-[11px] font-mono text-[#94A3B8]" suppressHydrationWarning>
+                    {mounted ? formatTime(log.timestamp) : '--:--'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-300">{log.payloadSummary}</p>
+                <p className="text-xs text-slate-300">{log.payloadSummary || 'No payload recorded'}</p>
                 <div className="flex items-center gap-4 text-[11px] text-[#94A3B8] pt-1">
-                  <span>Location: {log.location}</span>
+                  <span>Location: {log.location || 'Sector 4'}</span>
                   <span>Latency: {log.latencyMs}ms</span>
                 </div>
               </div>

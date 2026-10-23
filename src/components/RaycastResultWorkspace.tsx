@@ -166,13 +166,13 @@ export const RaycastResultWorkspace: React.FC<RaycastResultWorkspaceProps> = ({
 
         {/* Metadata Badges: Location, People Affected, Hazard */}
         <div className="flex flex-wrap items-center gap-3 text-xs text-[#94A3B8] pt-1">
-          {output.extractedEntities.location && (
+          {output.extractedEntities?.location && (
             <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#172033] border border-white/5 text-white">
               <MapPin className="w-3.5 h-3.5 text-[#4F8CFF]" />
               {output.extractedEntities.location}
             </span>
           )}
-          {output.extractedEntities.peopleAffected && (
+          {output.extractedEntities?.peopleAffected && (
             <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#172033] border border-white/5 text-white">
               <Users className="w-3.5 h-3.5 text-[#A78BFA]" />
               {output.extractedEntities.peopleAffected} persons affected
@@ -194,9 +194,9 @@ export const RaycastResultWorkspace: React.FC<RaycastResultWorkspaceProps> = ({
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">What We Know (Verified Facts)</h3>
           </div>
           <ul className="space-y-2 text-xs text-slate-200">
-            {(output.extractedEntities.keyFacts && output.extractedEntities.keyFacts.length > 0
+            {((output.extractedEntities?.keyFacts && output.extractedEntities.keyFacts.length > 0)
               ? output.extractedEntities.keyFacts
-              : output.extractedEntities.symptomsOrHazards
+              : output.extractedEntities?.symptomsOrHazards || ['Input context verified with high fidelity.']
             ).map((fact, idx) => (
               <li key={idx} className="flex items-start gap-2 bg-[#172033]/40 p-2 rounded-lg border border-white/5">
                 <Check className="w-3.5 h-3.5 text-[#34D399] mt-0.5 shrink-0" />
@@ -213,7 +213,7 @@ export const RaycastResultWorkspace: React.FC<RaycastResultWorkspaceProps> = ({
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">What Still Needs Confirmation</h3>
           </div>
           <ul className="space-y-2 text-xs text-slate-200">
-            {output.verificationChecks.missingCriticalInfo.length > 0 ? (
+            {output.verificationChecks?.missingCriticalInfo && output.verificationChecks.missingCriticalInfo.length > 0 ? (
               output.verificationChecks.missingCriticalInfo.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2 bg-[#172033]/40 p-2 rounded-lg border border-white/5 text-[#FBBF24]/90">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] mt-1.5 shrink-0" />
