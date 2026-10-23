@@ -452,7 +452,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             {terminalLogs.length === 0 && !isDispatching ? (
               <div className="text-slate-500 py-8 text-center">
-                Click <strong className="text-cyan-400 font-semibold">"Dispatch Action"</strong> below to execute the live downstream transmission sequence.
+                Click <strong className="text-cyan-400 font-semibold">&quot;Dispatch Action&quot;</strong> below to execute the live downstream transmission sequence.
               </div>
             ) : (
               <div className="space-y-1.5">

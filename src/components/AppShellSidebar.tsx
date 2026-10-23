@@ -66,7 +66,7 @@ export const AppShellSidebar: React.FC<AppShellSidebarProps> = () => {
   return (
     <>
       {/* Desktop Slim Collapsible Left Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-col justify-between h-screen fixed left-0 top-0 border-r border-white/8 bg-[#080B12]/95 backdrop-blur-xl z-30 select-none">
+      <aside aria-label="Main sidebar navigation" className="hidden lg:flex w-64 flex-col justify-between h-screen fixed left-0 top-0 border-r border-white/8 bg-[#080B12]/95 backdrop-blur-xl z-30 select-none">
         {/* Top Branding & Search Trigger */}
         <div className="p-4 space-y-4">
           <div className="flex items-center justify-between">
@@ -99,7 +99,7 @@ export const AppShellSidebar: React.FC<AppShellSidebarProps> = () => {
           </button>
 
           {/* Navigation Items */}
-          <nav className="space-y-1 pt-2">
+          <nav aria-label="Main navigation" className="space-y-1 pt-2">
             <span className="text-[10px] font-mono uppercase tracking-wider text-[#94A3B8]/70 px-2 block font-semibold mb-1">
               Platform
             </span>
@@ -114,6 +114,7 @@ export const AppShellSidebar: React.FC<AppShellSidebarProps> = () => {
                       ? 'bg-[#172033] border border-[#4F8CFF]/30 text-white shadow-sm'
                       : 'text-[#94A3B8] hover:text-white hover:bg-white/5 border border-transparent'
                   }`}
+                  aria-current={link.active ? 'page' : undefined}
                 >
                   <div className="flex items-center gap-2.5">
                     <Icon className={`w-4 h-4 ${link.active ? 'text-[#4F8CFF]' : 'text-[#94A3B8]'}`} />
@@ -183,17 +184,17 @@ export const AppShellSidebar: React.FC<AppShellSidebarProps> = () => {
 
             <button
               onClick={logout}
-              title="Sign Out"
+              aria-label="Sign out"
               className="p-1.5 text-[#94A3B8] hover:text-[#FB7185] rounded-md transition-colors cursor-pointer"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           </div>
         </div>
       </aside>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#080B12]/95 backdrop-blur-xl border-t border-white/10 px-4 py-2 flex items-center justify-around">
+      <nav aria-label="Mobile navigation" className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#080B12]/95 backdrop-blur-xl border-t border-white/10 px-4 py-2 flex items-center justify-around">
         {navLinks.map((link) => {
           const Icon = link.icon;
           return (
@@ -213,9 +214,10 @@ export const AppShellSidebar: React.FC<AppShellSidebarProps> = () => {
         {/* Floating Ask SETU Command Button for Mobile */}
         <button
           onClick={() => setIsCommandPaletteOpen(true)}
+          aria-label="Open command palette"
           className="p-2.5 rounded-full bg-[#4F8CFF] text-white shadow-lg shadow-[#4F8CFF]/30 cursor-pointer active:scale-95 transition-transform"
         >
-          <Command className="w-4 h-4" />
+          <Command className="w-4 h-4" aria-hidden="true" />
         </button>
       </nav>
     </>

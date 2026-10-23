@@ -24,13 +24,13 @@ export default function DashboardPage() {
 
   // Listen for custom preset selection from Command Palette
   React.useEffect(() => {
-    const handlePresetSelect = (e: any) => {
+    const handlePresetSelect = (e: CustomEvent<{ text?: string }>) => {
       if (e.detail?.text) {
         setTextPrompt(e.detail.text);
       }
     };
-    window.addEventListener('setu-preset-select', handlePresetSelect);
-    return () => window.removeEventListener('setu-preset-select', handlePresetSelect);
+    window.addEventListener('setu-preset-select', handlePresetSelect as EventListener);
+    return () => window.removeEventListener('setu-preset-select', handlePresetSelect as EventListener);
   }, []);
 
   const handleProcessIntent = async () => {
@@ -87,9 +87,10 @@ export default function DashboardPage() {
       });
 
       addToast('Situation analyzed and structured into safe action plan', 'success');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An unexpected error occurred';
       console.error('Error invoking SETU AI:', err);
-      addToast(`Notice: ${err.message}`, 'error');
+      addToast(`Notice: ${message}`, 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -101,7 +102,7 @@ export default function DashboardPage() {
       <RaycastTopBar onOpenKeyModal={() => setIsKeyModalOpen(true)} />
 
       {/* Main Command Workspace */}
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
+      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6" aria-label="SETU AI command workspace">
         {/* Quick Actions Grid (One-click intake workflows) */}
         <RaycastQuickActionsGrid onSelectAction={(text) => setTextPrompt(text)} />
 

@@ -322,10 +322,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {children}
 
         {/* Floating Toast Notification Container (Raycast style) */}
-        <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
+        <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none" role="status" aria-live="polite" aria-label="Notifications">
           {toasts.map((toast) => (
             <div
               key={toast.id}
+              role="alert"
               className={`pointer-events-auto px-4 py-2.5 rounded-xl shadow-2xl backdrop-blur-xl border text-xs font-medium flex items-center justify-between gap-3 transition-all ${
                 toast.type === 'success'
                   ? 'bg-[#111827]/95 border-[#34D399]/40 text-[#34D399]'
@@ -339,6 +340,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               <span>{toast.message}</span>
               <button
                 onClick={() => removeToast(toast.id)}
+                aria-label={`Dismiss notification: ${toast.message}`}
                 className="opacity-60 hover:opacity-100 text-xs ml-2 cursor-pointer"
               >
                 ✕

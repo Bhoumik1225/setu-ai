@@ -66,7 +66,7 @@ export const OnboardingTourModal: React.FC<OnboardingTourModalProps> = ({ isOpen
             onClick={onClose}
             className="cursor-pointer px-6 py-2.5 rounded-xl text-xs font-bold text-[#07111F] bg-[#22D3C5] hover:bg-[#1bb8ab] transition-all"
           >
-            Got it, Let's Explore
+            Got it, Let&apos;s Explore
           </button>
         </div>
       </div>

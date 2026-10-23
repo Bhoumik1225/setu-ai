@@ -53,6 +53,18 @@ export interface CaseTimelineItem {
   actionSummary?: string;
 }
 
+export interface SimulatedApiPayload {
+  targetSystem?: string;
+  protocolCode?: string;
+  priorityQueue?: string;
+  dispatchUnits?: string[];
+  timestamp?: string;
+  automatedVoiceNotification?: string;
+  automatedTrafficAdvisory?: string;
+  automatedCivilianAlert?: string | Record<string, unknown>;
+  [key: string]: unknown; // Allow Gemini-generated extra fields
+}
+
 export interface BridgeOutput {
   urgencyLevel: UrgencyLevel;
   urgencyLabel?: 'Routine' | 'Attention Needed' | 'Urgent' | 'Critical';
@@ -80,7 +92,7 @@ export interface BridgeOutput {
     isCredible: boolean;
     missingCriticalInfo: string[];
   };
-  simulatedApiPayload: Record<string, any>;
+  simulatedApiPayload: SimulatedApiPayload;
   medicalDisclaimerNeeded?: boolean;
 }
 

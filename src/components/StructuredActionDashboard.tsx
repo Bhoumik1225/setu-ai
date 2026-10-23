@@ -384,9 +384,9 @@ export const StructuredActionDashboard: React.FC<StructuredActionDashboardProps>
                     AUTOMATED BROADCAST SYNTHESIS:
                   </span>
                   <p className="text-xs italic">
-                    "{output.simulatedApiPayload.automatedVoiceNotification ||
+                    &quot;{output.simulatedApiPayload.automatedVoiceNotification ||
                       output.simulatedApiPayload.automatedTrafficAdvisory ||
-                      JSON.stringify(output.simulatedApiPayload.automatedCivilianAlert)}"
+                      JSON.stringify(output.simulatedApiPayload.automatedCivilianAlert)}&quot;
                   </p>
                 </div>
               ) : null}

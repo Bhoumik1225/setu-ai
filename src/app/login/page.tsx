@@ -53,7 +53,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 text-white font-sans overflow-y-auto min-h-screen">
+    <main className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 text-white font-sans overflow-y-auto min-h-screen" role="main" aria-label="Login page">
       {/* Luminous & Clear Aesthetic Wallpaper Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <img
@@ -100,19 +100,21 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" aria-label="Sign in form">
           {errorMessage && (
-            <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-600 font-medium">
+            <div role="alert" aria-live="assertive" className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-600 font-medium">
               {errorMessage}
             </div>
           )}
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 block">Judge / Responder Email</label>
+            <label htmlFor="login-email" className="text-xs font-bold text-slate-700 block">Judge / Responder Email</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" aria-hidden="true" />
               <input
+                id="login-email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -125,11 +127,13 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 block">Passcode / PIN</label>
+            <label htmlFor="login-password" className="text-xs font-bold text-slate-700 block">Passcode / PIN</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" aria-hidden="true" />
               <input
+                id="login-password"
                 type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
@@ -138,9 +142,10 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
                 className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
               </button>
             </div>
           </div>
@@ -156,7 +161,7 @@ export default function LoginPage() {
         </form>
 
         {/* Divider */}
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center" role="separator" aria-label="Or use evaluation gateway">
           <div className="border-t border-slate-200 w-full" />
           <span className="bg-white px-2.5 text-[10px] font-bold tracking-wider text-slate-400 uppercase absolute">
             Evaluation Gateway
@@ -186,6 +191,6 @@ export default function LoginPage() {
           ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

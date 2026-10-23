@@ -470,8 +470,8 @@ export async function POST(req: Request) {
 
     const ai = new GoogleGenAI({ apiKey });
 
-    const contents: any[] = [];
-    const promptParts: any[] = [];
+    const contents: Array<{ role: string; parts: Array<Record<string, unknown>> }> = [];
+    const promptParts: Array<Record<string, unknown>> = [];
 
     promptParts.push({
       text: `You are SETU AI (SEतु) — From Chaos to Safe Action.
@@ -544,7 +544,7 @@ Adhere strictly to the JSON schema output.`
       data: parsedData,
       isSimulated: false,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in /api/process-intent:', error);
 
     // If Gemini key or quota issues arise, gracefully provide the empathetic fallback

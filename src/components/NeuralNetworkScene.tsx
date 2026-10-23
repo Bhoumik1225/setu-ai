@@ -398,7 +398,7 @@ export const NeuralNetworkScene: React.FC<NeuralNetworkSceneProps> = ({
 
     // 11. Animation Loop
     let animationFrameId: number;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const posAttr = particleGeometry.getAttribute('position') as THREE.BufferAttribute;
     const linePosAttr = lineGeometry.getAttribute('position') as THREE.BufferAttribute;

@@ -44,7 +44,9 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       audioChunksRef.current = [];
 
       // Set up Web Audio API Analyser for real-time visualizer waveform
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const audioCtx = new AudioContextClass();
       audioContextRef.current = audioCtx;
 
